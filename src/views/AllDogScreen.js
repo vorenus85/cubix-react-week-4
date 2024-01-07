@@ -3,10 +3,17 @@ import { dogsData } from "../dogsData";
 import Dog from "../components/Dog";
 import { useEffect, useState } from "react";
 import Loading from "../components/Loading";
+import { useNavigate } from "react-router-dom";
 
 function AllDogScreen() {
   const [dogs, setDogs] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
+
+  const navigateToNewDog = () => {
+    navigate("dog/new");
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -52,7 +59,12 @@ function AllDogScreen() {
           </Grid>
           <Grid container spacing={2}>
             <Grid item xs={12} lg={3} md={4} sm={6}>
-              <Button size="large" variant="contained" fullWidth>
+              <Button
+                size="large"
+                variant="contained"
+                fullWidth
+                onClick={navigateToNewDog}
+              >
                 Add new dog
               </Button>
             </Grid>
