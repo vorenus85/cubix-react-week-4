@@ -1,24 +1,19 @@
-import logo from "./logo.svg";
-import "./App.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AllDogScreen from "./views/AllDogScreen";
+import OneDogScreen from "./views/OneDogScreen";
+import NewDogScreen from "./views/NewDogScreen";
+import NotFoundScreen from "./views/NotFoundScreen";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" exact element={<AllDogScreen />} />
+        <Route path="/dog/:id" element={<OneDogScreen />} />
+        <Route path="/dog/new" element={<NewDogScreen />} />
+        <Route path="*" exact element={<NotFoundScreen />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
