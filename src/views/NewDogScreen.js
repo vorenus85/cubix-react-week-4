@@ -20,11 +20,13 @@ function NewDogScreen() {
 
   useEffect(() => {}, []);
 
-  function validateName(name) {
+  async function validateName(name) {
     if (!name || name.length < 4) {
       setNameError(true);
+      return Promise.reject("Invalid name");
     } else {
       setNameError(false);
+      return Promise.resolve("Valid name");
     }
   }
 
@@ -32,60 +34,75 @@ function NewDogScreen() {
     return url.match(/\.(jpeg|jpg|gif|png)$/) != null;
   }
 
-  function validateImage(imageUrl) {
-    const isValidUrl = (imageUrl) => {
-      try {
-        return Boolean(new URL(imageUrl));
-      } catch (e) {
-        setImageError(true);
-        return false;
-      }
-    };
+  const isValidUrl = (imageUrl) => {
+    try {
+      return Boolean(new URL(imageUrl));
+    } catch (e) {
+      setImageError(true);
+      return false;
+    }
+  };
 
+  async function validateImage(imageUrl) {
     if (isValidUrl(imageUrl)) {
       if (!checkImageExtension(imageUrl)) {
         setImageError(true);
-        return;
+        return Promise.reject("Invalid image extension");
       }
 
-      fetch(imageUrl)
-        .then((response) => {
-          console.log(response);
-          if (response.ok) {
-            setImageError(false);
-            console.log("Image URL is valid");
-          } else {
-            setImageError(true);
-            console.log("Image URL is invalid");
-          }
-        })
-        .catch((error) => {
+      try {
+        const response = await fetch(imageUrl);
+        if (response.ok) {
+          setImageError(false);
+          console.log("Image URL is valid");
+          return response;
+        } else {
           setImageError(true);
-          console.error("Error validating image URL:", error);
-        });
+          console.log("Image URL is invalid");
+          return Promise.reject("Invalid image URL");
+        }
+      } catch (error) {
+        setImageError(true);
+        console.error("Error validating image URL:", error);
+        return Promise.reject(error);
+      }
     }
   }
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     const { name, image } = data;
-    validateName(name);
-    validateImage(image);
 
-    const lastDog = dogs.slice(-1);
+    let nameValidateResponse;
+    let imageValidateResponse;
 
-    const newDog = {
-      id: lastDog[0].id + 1,
-      name,
-      image,
-    };
+    try {
+      nameValidateResponse = await validateName(name);
+    } catch (error) {
+      // Handle error from validateImage, if any
+      console.error("Error validating name:", error);
+    }
 
-    setDogs((previousValue) => {
-      previousValue.push(newDog);
-      return [...previousValue];
-    });
+    try {
+      imageValidateResponse = await validateImage(image);
+    } catch (error) {
+      // Handle error from validateImage, if any
+      console.error("Error validating image:", error);
+    }
 
-    navigate("/");
+    if (imageValidateResponse && nameValidateResponse) {
+      const lastDog = dogs.slice(-1);
+      const newDog = {
+        id: lastDog.length > 0 ? lastDog[0].id + 1 : 1,
+        name,
+        image,
+      };
+
+      setDogs((previousValue) => {
+        return [...previousValue, newDog];
+      });
+      navigate("/");
+    }
   };
 
   return (

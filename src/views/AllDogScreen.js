@@ -22,10 +22,6 @@ function AllDogScreen() {
     }, 500);
   }, []);
 
-  const ModifyDog = (id) => {
-    console.log("ModifyDog clicked: " + id);
-  };
-
   const DeleteDog = (id) => {
     const selectedDogIndex = dogs.findIndex((dog) => dog.id === id);
     setDogs((previousValue) => {
@@ -52,7 +48,6 @@ function AllDogScreen() {
                       name={dog.name}
                       key={dog.id}
                       image={dog.image}
-                      modifyDog={() => ModifyDog(dog.id)}
                       deleteDog={() => DeleteDog(dog.id)}
                     />
                   );
