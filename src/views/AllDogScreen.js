@@ -1,27 +1,26 @@
 import { Grid, Button, Typography } from "@mui/material";
-import { dogsData } from "../dogsData";
 import Dog from "../components/Dog";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import Loading from "../components/Loading";
 import { useNavigate } from "react-router-dom";
+import DogContext from "../DogContext";
 
 function AllDogScreen() {
-  const [dogs, setDogs] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const { dogs, setDogs } = useContext(DogContext);
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
   const navigateToNewDog = () => {
-    navigate("dog/new");
+    navigate("/dog/new");
   };
 
   useEffect(() => {
     setLoading(true);
     setTimeout(() => {
-      setDogs(dogsData);
       setLoading(false);
     }, 500);
-  }, [setDogs]);
+  }, []);
 
   const ModifyDog = (id) => {
     console.log("ModifyDog clicked: " + id);
@@ -45,17 +44,21 @@ function AllDogScreen() {
       ) : (
         <div>
           <Grid container spacing={2}>
-            {dogs.map((dog) => {
-              return (
-                <Dog
-                  name={dog.name}
-                  key={dog.id}
-                  image={dog.image}
-                  modifyDog={() => ModifyDog(dog.id)}
-                  deleteDog={() => DeleteDog(dog.id)}
-                />
-              );
-            })}
+            <DogContext.Consumer>
+              {(value) =>
+                value.dogs.map((dog) => {
+                  return (
+                    <Dog
+                      name={dog.name}
+                      key={dog.id}
+                      image={dog.image}
+                      modifyDog={() => ModifyDog(dog.id)}
+                      deleteDog={() => DeleteDog(dog.id)}
+                    />
+                  );
+                })
+              }
+            </DogContext.Consumer>
           </Grid>
           <Grid container spacing={2}>
             <Grid item xs={12} lg={3} md={4} sm={6}>

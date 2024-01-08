@@ -1,10 +1,15 @@
 import { TextField, Button, Typography, Paper, Box, Grid } from "@mui/material";
-import { useEffect, useState } from "react";
+import DogContext from "../DogContext";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
 
 function NewDogScreen() {
   const [data, setData] = useState({});
+  const { dogs, setDogs } = useContext(DogContext);
   const [nameError, setNameError] = useState(false);
   const [imageError, setImageError] = useState(false);
+
+  const navigate = useNavigate();
 
   const updateData = (e) => {
     setData({
@@ -66,6 +71,21 @@ function NewDogScreen() {
     const { name, image } = data;
     validateName(name);
     validateImage(image);
+
+    const lastDog = dogs.slice(-1);
+
+    const newDog = {
+      id: lastDog[0].id + 1,
+      name,
+      image,
+    };
+
+    setDogs((previousValue) => {
+      previousValue.push(newDog);
+      return [...previousValue];
+    });
+
+    navigate("/");
   };
 
   return (
@@ -105,9 +125,24 @@ function NewDogScreen() {
               />
             </Grid>
             <Grid item xs={12}>
-              <Button size="large" variant="contained" fullWidth type="submit">
-                Add new dog
-              </Button>
+              <Grid container spacing={2}>
+                <Grid item sm={6}>
+                  <Button variant="contained" fullWidth type="submit">
+                    Add new dog
+                  </Button>
+                </Grid>
+                <Grid item sm={6}>
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    onClick={() => {
+                      navigate("/");
+                    }}
+                  >
+                    Back to list
+                  </Button>
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
         </Box>

@@ -3,17 +3,25 @@ import AllDogScreen from "./views/AllDogScreen";
 import EditDogScreen from "./views/EditDogScreen";
 import NewDogScreen from "./views/NewDogScreen";
 import NotFoundScreen from "./views/NotFoundScreen";
+import { useState } from "react";
+import DogContext from "./DogContext";
+import { dogsData } from "./dogsData";
 
 function App() {
+  const [dogs, setDogs] = useState(dogsData);
+  const value = { dogs, setDogs };
+
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" exact element={<AllDogScreen />} />
-        <Route path="/dog/:id" element={<EditDogScreen />} />
-        <Route path="/dog/new" element={<NewDogScreen />} />
-        <Route path="*" exact element={<NotFoundScreen />} />
-      </Routes>
-    </BrowserRouter>
+    <DogContext.Provider value={value}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" exact element={<AllDogScreen />} />
+          <Route path="/dog/:id" element={<EditDogScreen />} />
+          <Route path="/dog/new" element={<NewDogScreen />} />
+          <Route path="*" exact element={<NotFoundScreen />} />
+        </Routes>
+      </BrowserRouter>
+    </DogContext.Provider>
   );
 }
 
