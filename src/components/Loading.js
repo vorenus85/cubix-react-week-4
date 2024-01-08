@@ -1,5 +1,5 @@
 import { Grid } from "@mui/material";
-import "./loading.css";
+import "../assets/loading.css";
 function Loading() {
   return (
     <Grid container spacing={2}>
