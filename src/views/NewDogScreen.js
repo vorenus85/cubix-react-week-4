@@ -23,6 +23,10 @@ function NewDogScreen() {
     }
   }
 
+  function checkImageExtension(url) {
+    return url.match(/\.(jpeg|jpg|gif|png)$/) != null;
+  }
+
   function validateImage(imageUrl) {
     const isValidUrl = (imageUrl) => {
       try {
@@ -34,6 +38,11 @@ function NewDogScreen() {
     };
 
     if (isValidUrl(imageUrl)) {
+      if (!checkImageExtension(imageUrl)) {
+        setImageError(true);
+        return;
+      }
+
       fetch(imageUrl)
         .then((response) => {
           console.log(response);
